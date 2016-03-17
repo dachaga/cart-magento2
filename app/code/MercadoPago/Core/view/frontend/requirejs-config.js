@@ -10,7 +10,8 @@ var config = {
             MPcustom: 'https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js',
             meli: 'MercadoPago_Core/js/mercadopago',
             tinyj: 'MercadoPago_Core/js/tinyJ',
-            tiny: 'MercadoPago_Core/js/tiny.min'
+            tiny: 'MercadoPago_Core/js/tiny.min',
+            summaryDiscount: 'MercadoPago_Core/js/view/checkout/summary/discount_coupon'
         }
     }
 };
