@@ -143,6 +143,7 @@ class FeatureContext
     public function iAmOnPage($arg1)
     {
         $this->getSession()->visit($this->locatePath($arg1));
+        $this->iShouldBeOn($arg1);
     }
 
     /**
