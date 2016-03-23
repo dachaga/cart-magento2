@@ -5,8 +5,8 @@ Feature: A customer should be able to do a checkout with MercadoPago
     Given User "test_user_58666377@testuser.com" "magento" exists
     And I am logged in as "test_user_58666377@testuser.com" "magento"
     And I empty cart
-    And I am on page "push-it-messenger-bag.html"
-    And I press element with path "//button[@id='product-addtocart-button']"
+    And I am on page "catalog/product/view/id/14"
+    And I press "#product-addtocart-button" element with path
     And I am on page "checkout/cart/"
 
 
@@ -76,33 +76,4 @@ Feature: A customer should be able to do a checkout with MercadoPago
 
     When I switch to the iframe "mercadopago_standard-iframe"
     Then I should see html "$ 50"
-
-  @STANDARDPerCountry @skip
-  Scenario Outline: Generate order with sandbox mode
-    When Setting merchant <country>
-    And User "<user>" "<pass>" exists
-    And I am logged in as "<user>" "<pass>"
-    And I empty cart
-    And I am on page "blue-horizons-bracelets.html"
-    And I press ".add-to-cart-buttons .btn-cart" element
-    And I press ".btn-proceed-checkout" element
-    And I fill the billing address
-    And I press "#billing-buttons-container .button" element
-    And I select shipping method "s_method_flatrate_flatrate"
-    And I press "#shipping-method-buttons-container .button" element
-    And I select radio "p_method_mercadopago_standard"
-    And I press "#payment-buttons-container .button" element
-    And Setting Config "payment/mercadopago_standard/sandbox_mode" is "0"
-    And I press "#review-buttons-container .button" element
-    And I switch to the iframe "checkout_mercadopago"
-    And I am logged in MP as "test_user_58787749@testuser.com" "qatest850"
-    And I fill the iframe fields country <country>
-    And I press "#next" input element
-    And I switch to the site
-    And I wait for "12" seconds
-    Then I should be on "/mercadopago/success"
-
-    Examples:
-      | country | user                            | pass    |
-      | mlv     | test_user_58787749@testuser.com | magento |
 
