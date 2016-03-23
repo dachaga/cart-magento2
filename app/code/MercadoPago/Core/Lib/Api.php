@@ -14,7 +14,7 @@ class MercadoPago_Core_Lib_Api {
     /**
      *
      */
-    const version = "0.3.3";
+    const VERSION = "0.3.3";
 
     /**
      * @var mixed

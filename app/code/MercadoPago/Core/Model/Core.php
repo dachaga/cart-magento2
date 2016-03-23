@@ -718,6 +718,20 @@ class Core
         return $details_discount;
     }
 
+    protected function _createInvoice($order,$message) {
+        if (!$order->hasInvoices()) {
+            $invoice = $order->prepareInvoice();
+            $invoice->register()->pay();
+            $this->_transactionFactory->create()
+                ->addObject($invoice)
+                ->addObject($invoice->getOrder())
+                ->save();
+
+            $this->_invoiceSender->send($invoice, true, $message);
+
+        }
+    }
+
     /**
      * Updates order status ond creates invoice
      *
@@ -730,7 +744,6 @@ class Core
     {
         $helper = $this->_coreHelper;
         $order = $this->_getOrder($payment["external_reference"]);
-
         $status = $payment['status'];
 
         if (isset($payment['status_final'])) {
@@ -744,18 +757,8 @@ class Core
         try {
             if ($status == 'approved') {
                 $this->_coreHelper->setOrderSubtotals($payment, $order);
+                $this->_createInvoice($order,$message);
 
-                if (!$order->hasInvoices()) {
-                    $invoice = $order->prepareInvoice();
-                    $invoice->register()->pay();
-                    $this->_transactionFactory->create()
-                        ->addObject($invoice)
-                        ->addObject($invoice->getOrder())
-                        ->save();
-
-                    $this->_invoiceSender->send($invoice, true, $message);
-
-                }
                 //Associate card to customer
                 $additionalInfo = $order->getPayment()->getAdditionalInformation();
                 if (isset($additionalInfo['token'])) {
@@ -788,6 +791,27 @@ class Core
 
             return ['text' => $e, 'code' => \MercadoPago\Core\Helper\Response::HTTP_BAD_REQUEST];
         }
+    }
+
+    /**
+     * @param $order
+     * @param $data
+     *
+     * @return mixed
+     */
+    protected function _setOrderCustomerData($order,$data) {
+        if ($data['payer_first_name']) {
+            $order->setCustomerFirstname($data['payer_first_name']);
+        }
+
+        if ($data['payer_last_name']) {
+            $order->setCustomerLastname($data['payer_last_name']);
+        }
+
+        if ($data['payer_email']) {
+            $order->setCustomerEmail($data['payer_email']);
+        }
+        return $order->save();
     }
 
     /**
@@ -832,20 +856,7 @@ class Core
                 $payment_status = $payment_order->save();
                 $this->_coreHelper->log("Update Payment", 'mercadopago.log', $payment_status->getData());
 
-                if ($data['payer_first_name']) {
-                    $order->setCustomerFirstname($data['payer_first_name']);
-                }
-
-                if ($data['payer_last_name']) {
-                    $order->setCustomerLastname($data['payer_last_name']);
-                }
-
-                if ($data['payer_email']) {
-                    $order->setCustomerEmail($data['payer_email']);
-                }
-
-
-                $status_save = $order->save();
+                $status_save = $this->_setOrderCustomerData($order,$data);
                 $this->_coreHelper->log("Update order", 'mercadopago.log', $status_save->getData());
             } catch (\Exception $e) {
                 $this->_coreHelper->log("erro in update order status: " . $e, 'mercadopago.log');
