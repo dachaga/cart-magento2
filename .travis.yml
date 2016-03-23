@@ -67,6 +67,7 @@ before_script:
   - sudo cp -f .travis/travis-ci-apache /etc/apache2/sites-available/default
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
   - sudo service apache2 restart
+  - sudo rm composer.lock
   - cp -f .travis/composer.json composer.json
   - composer global config http-basic.repo.magento.com f2618fa3a9f0fe7002b8c5edaea0ed22 3db3f6c9b5cf1734e2dfa13979ef9d3a
   - composer install --no-interaction --prefer-dist
