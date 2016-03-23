@@ -218,6 +218,7 @@ class FeatureContext
             $this->findElement('.selected-item');
         } catch (ElementNotFoundException $e) {
             $page = $this->getSession()->getPage();
+            echo $this->getSession()->getPage()->getHtml();
             $page->fillField('street[0]', 'Street 123');
             $page->fillField('city', 'City');
             $page->selectFieldOption('country_id', 'AR');

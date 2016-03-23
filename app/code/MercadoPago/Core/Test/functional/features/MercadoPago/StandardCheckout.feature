@@ -5,7 +5,7 @@ Feature: A customer should be able to do a checkout with MercadoPago
     Given User "test_user_58666377@testuser.com" "magento" exists
     And I am logged in as "test_user_58666377@testuser.com" "magento"
     And I empty cart
-    And I am on page "push-it-messenger-bag.html"
+    And I am on page "catalog/product/view/id/14"
     And I press "#product-addtocart-button" element
     And I am on page "checkout/cart/"
 
@@ -14,7 +14,7 @@ Feature: A customer should be able to do a checkout with MercadoPago
   Scenario: See MercadoPago standard option as a payment method
     And I configure mercadopago standard
     And I press "[data-role='proceed-to-checkout']" element
-    And I wait for "10" seconds
+    And I wait for "6" seconds
     And I fill the shipping address
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
@@ -25,7 +25,7 @@ Feature: A customer should be able to do a checkout with MercadoPago
   Scenario: Not See MercadoPago option as a payment method when is not client id
     When Setting Config "payment/mercadopago_standard/client_id" is "0"
     And I press "[data-role='proceed-to-checkout']" element
-    And I wait for "10" seconds
+    And I wait for "6" seconds
     And I fill the shipping address
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
@@ -37,7 +37,7 @@ Feature: A customer should be able to do a checkout with MercadoPago
   Scenario: Not See MercadoPago option as a payment method when is not available client secret
     When Setting Config "payment/mercadopago_standard/client_secret" is "0"
     And I press "[data-role='proceed-to-checkout']" element
-    And I wait for "10" seconds
+    And I wait for "6" seconds
     And I fill the shipping address
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
@@ -48,8 +48,7 @@ Feature: A customer should be able to do a checkout with MercadoPago
   @checkoutSuccess
   Scenario: Generate order with standard checkout
     When I press "[data-role='proceed-to-checkout']" element
-
-    And I wait for "10" seconds
+    And I wait for "6" seconds
     And I fill the shipping address
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
@@ -67,7 +66,6 @@ Feature: A customer should be able to do a checkout with MercadoPago
   @checkoutPrice
   Scenario: Check total displayed in iframe
     When I press "[data-role='proceed-to-checkout']" element
-    And I wait for "10" seconds
     And I fill the shipping address
     And I wait for "6" seconds
     And I select shipping method "flatrate_flatrate"
