@@ -35,7 +35,7 @@ class DiscountCoupon
      *
      * @return bool
      */
-    protected function _getDiscountCondition($address)
+    protected function _isDiscountCondition($address)
     {
         $req = $this->request->getParam('total_amount');
 
@@ -61,7 +61,7 @@ class DiscountCoupon
     {
         $address = $shippingAssignment->getShipping()->getAddress();
 
-        if ($this->_getDiscountCondition($address)) {
+        if ($this->_isDiscountCondition($address)) {
 
             $postData = $this->request->getPost();
             parent::collect($quote, $shippingAssignment, $total);
@@ -89,6 +89,8 @@ class DiscountCoupon
      * @param \Magento\Quote\Model\Quote\Address\Total $total
      *
      * @return array|null
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function fetch(\Magento\Quote\Model\Quote $quote, \Magento\Quote\Model\Quote\Address\Total $total)
     {

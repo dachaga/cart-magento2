@@ -117,6 +117,8 @@ class Payment
 
     /**
      * {inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function postRequest(DataObject $request, ConfigInterface $config)
     {
@@ -493,7 +495,7 @@ class Payment
      *
      * @param $email
      *
-     * @return bool
+     * @return bool|array
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getOrCreateCustomer($email)

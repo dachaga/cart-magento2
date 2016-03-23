@@ -265,17 +265,14 @@ class Payment
         }
 
         $shipping = $order->getShippingAddress()->getData();
-
         $arr['payer']['phone'] = [
             "area_code" => "-",
             "number"    => $shipping['telephone']
         ];
-
         $paramsShipment['receiver_address'] = $this->getReceiverAddress($order->getShippingAddress());
         $arr['shipments'] = $paramsShipment;
 
         $billing_address = $order->getBillingAddress()->getData();
-
         $arr['payer']['date_created'] = date('Y-m-d', $customer->getCreatedAtTimestamp()) . "T" . date('H:i:s', $customer->getCreatedAtTimestamp());
         $arr['payer']['email'] = htmlentities($customer->getEmail());
         $arr['payer']['first_name'] = htmlentities($customer->getFirstname());
@@ -293,15 +290,12 @@ class Payment
             "street_name"   => $billing_address['street'] . " - " . $billing_address['city'] . " - " . $billing_address['country_id'],
             "street_number" => ""
         ];
-
         $arr['back_urls'] = [
             'success' => $this->_urlBuilder->getUrl('mercadopago/standard/success'),
             'pending' => $this->_urlBuilder->getUrl('mercadopago/standard/success'),
             'failure' => $this->_urlBuilder->getUrl('checkout/onepage/failure'),
         ];
-
         $arr['notification_url'] = $this->_urlBuilder->getUrl("mercadopago/notifications/standard");
-
         $arr['payment_methods']['excluded_payment_methods'] = $this->getExcludedPaymentsMethods();
         $installments = $this->getConfigData('installments');
         $arr['payment_methods']['installments'] = (int)$installments;
@@ -317,7 +311,6 @@ class Payment
             $this->_helperData->log("Sponsor_id identificado", 'mercadopago-standard.log', $sponsor_id);
             $arr['sponsor_id'] = (int)$sponsor_id;
         }
-
 
         return $arr;
     }

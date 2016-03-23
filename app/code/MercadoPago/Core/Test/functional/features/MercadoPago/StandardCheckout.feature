@@ -7,8 +7,6 @@ Feature: A customer should be able to do a checkout with MercadoPago
     And I empty cart
     And I am on page "push-it-messenger-bag.html"
     And I press "#product-addtocart-button" element
-    And I am on page "checkout/cart/"
-
 
   @viewStandard
   Scenario: See MercadoPago standard option as a payment method

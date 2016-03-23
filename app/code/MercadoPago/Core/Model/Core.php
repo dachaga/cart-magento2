@@ -718,6 +718,12 @@ class Core
         return $details_discount;
     }
 
+    /**
+     * Creates invoice to order and send an email
+     *
+     * @param $order
+     * @param $message
+     */
     protected function _createInvoice($order,$message) {
         if (!$order->hasInvoices()) {
             $invoice = $order->prepareInvoice();

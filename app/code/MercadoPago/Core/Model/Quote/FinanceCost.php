@@ -35,7 +35,7 @@ class FinanceCost
      *
      * @return bool
      */
-    protected function _getFinancingCondition($address)
+    protected function _isFinancingCondition($address)
     {
         $req = $this->request->getParam('total_amount');
 
@@ -61,7 +61,7 @@ class FinanceCost
     {
         $address = $shippingAssignment->getShipping()->getAddress();
 
-        if ($this->_getFinancingCondition($address)) {
+        if ($this->_isFinancingCondition($address)) {
             $postData = $this->request->getPost();
             parent::collect($quote, $shippingAssignment, $total);
 
@@ -91,6 +91,8 @@ class FinanceCost
      * @param \Magento\Quote\Model\Quote\Address\Total $total
      *
      * @return array|null
+     *
+     * * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function fetch(\Magento\Quote\Model\Quote $quote, \Magento\Quote\Model\Quote\Address\Total $total)
     {
