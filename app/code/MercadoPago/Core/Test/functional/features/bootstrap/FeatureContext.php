@@ -353,5 +353,52 @@ class FeatureContext
         $this->getSession()->wait($milliseconds);
     }
 
+    /**
+     * @Given Setting merchant :arg1
+     */
+    public function settingMerchant($arg1)
+    {
+        $dataCountry = [
+            'mla' => [
+                'client_id'     => '446950613712741',
+                'client_secret' => '0WX05P8jtYqCtiQs6TH1d9SyOJ04nhEv'
+            ],
+            'mlb' => [
+                'client_id'     => '1872374615846510',
+                'client_secret' => 'WGfDqM8bNLzjvmrEz8coLCUwL8s4h9HZ'
+            ],
+            'mlm' => [
+                'client_id'     => '2272101328791208',
+                'client_secret' => 'cPi6Mlzc7bGkEaubEJjHRipqmojXLtKm'
+            ],
+            'mlv' => [
+                'client_id'     => '201313175671817',
+                'client_secret' => 'bASLUlb5s12QYPAUJwCQUMa21wFzFrzz',
+                'public_key'    => 'TEST-a4f588fd-5bb8-406c-9811-1536154d5d73',
+                'access_token'  => 'TEST-201313175671817-111108-b30483a389dbc6a04e401c23e62da2c1__LB_LC__-193994249'
+            ],
+            'mco' => [
+                'client_id'     => '3688958250893559',
+                'client_secret' => 'bASLUlb5s12QYPAUJwCQUMa21wFzFrzz',
+                'public_key'    => 'TEST-d6e2006f-933f-4dd2-aea4-c3986b30e691',
+                'access_token'  => 'TEST-3688958250893559-030308-19e24cdca75845d460c2935585b1e375__LA_LB__-207596493'
+            ]
+        ];
+        $clientId = $dataCountry[$arg1]['client_id'];
+        $clientSecret = $dataCountry[$arg1]['client_secret'];
+        $this->settingConfig('payment/mercadopago/country', $arg1);
+        $this->settingConfig('payment/mercadopago_standard/client_id', $clientId);
+        $this->settingConfig('payment/mercadopago_standard/client_secret', $clientSecret);
+        if (isset($dataCountry[$arg1]['public_key'])) {
+            $publicKey = $dataCountry[$arg1]['public_key'];
+            $accessToken = $dataCountry[$arg1]['access_token'];
+            $this->settingConfig('payment/mercadopago_custom_checkout/public_key', $publicKey);
+            $this->settingConfig('payment/mercadopago_custom_checkout/access_token', $accessToken);
+        }
+
+        $code = Mage::getModel('mercadopago/source_country')->getCodeByValue($arg1);
+        $this->settingConfig('carriers/mercadoenvios/specificcountry', $code);
+    }
+
 
 }

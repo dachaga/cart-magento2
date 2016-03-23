@@ -69,7 +69,7 @@ before_script:
   - sudo service apache2 restart
   - cp -f .travis/composer.json composer.json
   - composer global config http-basic.repo.magento.com f2618fa3a9f0fe7002b8c5edaea0ed22 3db3f6c9b5cf1734e2dfa13979ef9d3a
-  - composer install --no-interaction
+  - composer install --no-interaction --prefer-dist
   - mkdir tmp
   - mysql -e "DROP DATABASE IF EXISTS ${MAGENTO_DB_NAME}; CREATE DATABASE ${MAGENTO_DB_NAME};"
   - sudo chown -R :www-data .
