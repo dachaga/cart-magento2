@@ -56,6 +56,23 @@ class FeatureContext
     }
 
     /**
+     * @param $xPath
+     *
+     * @return \Behat\Mink\Element\NodeElement|mixed|null
+     * @throws ElementNotFoundException
+     */
+    public function findElementWithPath($xpath)
+    {
+        $page = $this->getSession()->getPage();
+        $element = $page->find('xpath',  $this->getSession()->getSelectorsHandler()->selectorToXpath('xpath', $xpath));
+        if (null === $element) {
+            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Element', 'xpath', $xpath);
+        }
+
+        return $element;
+    }
+
+    /**
      * @Then i revert configs
      */
     public function iRevertConfigs()
@@ -151,8 +168,18 @@ class FeatureContext
      */
     public function iPressElement($cssClass)
     {
-        $this->getSession()->wait(10000);
+        $this->getSession()->wait(4000);
         $button = $this->findElement($cssClass);
+        $button->press();
+    }
+
+    /**
+     * @Given I press element with path :xpath
+     */
+    public function iPressElementWithPath($xpath)
+    {
+        $this->getSession()->wait(4000);
+        $button = $this->findElementWithPath($xpath);
         $button->press();
     }
 

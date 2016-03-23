@@ -6,7 +6,7 @@ Feature: A customer should be able to do a checkout with MercadoPago
     And I am logged in as "test_user_58666377@testuser.com" "magento"
     And I empty cart
     And I am on page "push-it-messenger-bag.html"
-    And I press "#product-addtocart-button" element
+    And I press element with path "//button[@id='product-addtocart-button']"
     And I am on page "checkout/cart/"
 
 
