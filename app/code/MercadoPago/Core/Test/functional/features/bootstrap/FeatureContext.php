@@ -395,10 +395,43 @@ class FeatureContext
             $this->settingConfig('payment/mercadopago_custom_checkout/public_key', $publicKey);
             $this->settingConfig('payment/mercadopago_custom_checkout/access_token', $accessToken);
         }
-
-        $code = Mage::getModel('mercadopago/source_country')->getCodeByValue($arg1);
-        $this->settingConfig('carriers/mercadoenvios/specificcountry', $code);
     }
+
+    /**
+     * @When I am logged in MP as :arg1 :arg2
+     */
+    public function iAmLoggedInMPAs($arg1, $arg2)
+    {
+        $session = $this->getSession();
+        $logged = $session->getPage()->find('css', '#payerAccount');
+        if ($logged) {
+            $exit = $session->getPage()->find('css', '#payerAccount a');
+            $exit->press();
+            $this->iWaitForSeconds(5);
+        }
+
+        $login = $session->getPage()->find('css', '#user_id');
+        $pwd = $session->getPage()->find('css', '#password');
+        $submit = $session->getPage()->find('css', '#init');
+        if ($login && $pwd && $submit) {
+            $email = $arg1;
+            $password = $arg2;
+            $login->setValue($email);
+            $pwd->setValue($password);
+            $submit->click();
+            $this->iWaitForSeconds(7);
+            $logged = $session->getPage()->find('css', '#payerAccount');
+            if ($logged) {
+                return;
+            } else {
+                $actual = $this->getSession()->getPage()->getHtml();
+                if ($this->_stringMatch($actual, "captcha")) {
+                    throw new ExpectationException('This form has a captcha', $this->getSession()->getDriver());
+                }
+            }
+        }
+    }
+
 
 
 }

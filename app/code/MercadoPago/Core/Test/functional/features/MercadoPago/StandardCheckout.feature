@@ -6,7 +6,7 @@ Feature: A customer should be able to do a checkout with MercadoPago
     And I am logged in as "test_user_58666377@testuser.com" "magento"
     And I empty cart
     And I am on page "catalog/product/view/id/14"
-    And I press "#product-addtocart-button" element with path
+    And I press "#product-addtocart-button" element
     And I am on page "checkout/cart/"
 
 
@@ -76,4 +76,6 @@ Feature: A customer should be able to do a checkout with MercadoPago
 
     When I switch to the iframe "mercadopago_standard-iframe"
     Then I should see html "$ 50"
+
+
 
