@@ -160,9 +160,6 @@ class FeatureContext
     public function iAmOnPage($arg1)
     {
         $this->getSession()->visit($this->locatePath($arg1));
-        echo $this->getSession()->getPage()->getHtml();
-        exit;
-
     }
 
     /**
