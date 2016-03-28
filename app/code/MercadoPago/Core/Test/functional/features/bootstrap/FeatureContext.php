@@ -168,7 +168,7 @@ class FeatureContext
             $this->iWaitForSeconds(6);
             $lg = $session->getPage()->find('css', 'li.customer-welcome');
             if (null === $lg) {
-                throw new ElementNotFoundException($this->getSession()->getDriver(), 'Element', 'css', $cssClass);
+                throw new ElementNotFoundException($this->getSession()->getDriver(), 'Element', 'css', 'li.customer-welcome');
             }
         }
     }
