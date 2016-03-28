@@ -10,6 +10,7 @@
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\Mink\Element\DocumentElement;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Bex\Behat\Magento2InitExtension\Fixtures\BaseMinkFixture;
@@ -28,6 +29,12 @@ class FeatureContext
 {
 
     protected $_configManager;
+
+    /**
+     * @var DocumentElement|null
+     */
+    protected $document;
+
 
     protected function getConfigManager()
     {
@@ -64,7 +71,7 @@ class FeatureContext
     public function findElementWithPath($xpath)
     {
         $page = $this->getSession()->getPage();
-        $element = $page->find('xpath',  $this->getSession()->getSelectorsHandler()->selectorToXpath('xpath', $xpath));
+        $element = $page->find('xpath', $this->getSession()->getSelectorsHandler()->selectorToXpath('xpath', $xpath));
         if (null === $element) {
             throw new ElementNotFoundException($this->getSession()->getDriver(), 'Element', 'xpath', $xpath);
         }
@@ -210,6 +217,18 @@ class FeatureContext
     }
 
     /**
+     * @return DocumentElement
+     */
+    protected function getDocument()
+    {
+        if (null === $this->document) {
+            $this->document = new DocumentElement($this->getSession());
+        }
+
+        return $this->document;
+    }
+
+    /**
      * @When I fill the shipping address
      */
     public function iFillTheShippingAddress()
@@ -217,14 +236,15 @@ class FeatureContext
         try {
             $this->findElement('.selected-item');
         } catch (ElementNotFoundException $e) {
-            $page = $this->getSession()->getPage();
-            $page->fillField('firstname', 'Jhon');
-            $page->fillField('lastname', 'Doe');
-            $page->fillField('street[0]', 'Street 123');
-            $page->fillField('city', 'City');
-            $page->selectFieldOption('country_id', 'AR');
-            $page->fillField('postcode', '7000');
-            $page->fillField('telephone', '123456');
+            $document = $this->getDocument();
+            $document->fillField('First name', 'Jhon');
+            $document->fillField('firstname', 'Jhon');
+            $document->fillField('lastname', 'Doe');
+            $document->fillField('street[0]', 'Street 123');
+            $document->fillField('city', 'City');
+            $document->selectFieldOption('country_id', 'AR');
+            $document->fillField('postcode', '7000');
+            $document->fillField('telephone', '123456');
         }
     }
 
@@ -432,7 +452,6 @@ class FeatureContext
             }
         }
     }
-
 
 
 }
