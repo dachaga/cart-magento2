@@ -237,7 +237,6 @@ class FeatureContext
             $this->findElement('.selected-item');
         } catch (ElementNotFoundException $e) {
             $document = $this->getDocument();
-            $document->fillField('First name', 'Jhon');
             $document->fillField('firstname', 'Jhon');
             $document->fillField('lastname', 'Doe');
             $document->fillField('street[0]', 'Street 123');
