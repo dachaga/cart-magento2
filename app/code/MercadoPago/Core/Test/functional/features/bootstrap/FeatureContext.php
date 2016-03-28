@@ -165,7 +165,11 @@ class FeatureContext
             $login->setValue($email);
             $pwd->setValue($password);
             $submit->click();
-            $this->findElement('li.customer-welcome');
+            $this->iWaitForSeconds(6);
+            $lg = $session->getPage()->find('css', 'li.customer-welcome');
+            if (null === $lg) {
+                throw new ElementNotFoundException($this->getSession()->getDriver(), 'Element', 'css', $cssClass);
+            }
         }
     }
 
