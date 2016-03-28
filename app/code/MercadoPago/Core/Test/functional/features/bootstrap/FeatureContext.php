@@ -99,6 +99,24 @@ class FeatureContext
         return ((bool)preg_match($regex, $actual));
     }
 
+    protected function setShippingAddress($customer) {
+        $addresses =$this->getMagentoObject('Magento\Customer\Model\Address');
+
+        $addresses->setFirstname('firstname', 'Jhon');
+        $addresses->setLastname('lastname', 'Doe');
+        $addresses->setStreet(['Street 123']);
+        $addresses->setCity('City');
+        $addresses->setCountryId('AR');
+        $addresses->setPostcode('7000');
+        $addresses->setTelephone('123456');
+        $addresses->setParentId($customer->getId());
+        $addresses->setDefaultShipping(1);
+        $addresses->save();
+
+        $customer->setAddresses([$addresses]);
+        $customer->save();
+    }
+
 
     /*********************************************************FEATURE FUNCTIONS**************************************/
 
@@ -123,6 +141,9 @@ class FeatureContext
                 ->setPassword($arg2);
 
             $customer->save();
+        }
+        if ($customer->getPrimaryShippingAddress()===false) {
+            $this->setShippingAddress($customer);
         }
 
     }

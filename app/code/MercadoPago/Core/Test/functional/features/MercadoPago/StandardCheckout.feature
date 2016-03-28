@@ -13,7 +13,6 @@ Feature: A customer should be able to do a checkout with MercadoPago
     And I configure mercadopago standard
     And I am on page "checkout"
     And I wait for "6" seconds
-    And I fill the shipping address
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
 
@@ -24,7 +23,6 @@ Feature: A customer should be able to do a checkout with MercadoPago
     When Setting Config "payment/mercadopago_standard/client_id" is "0"
     And I am on page "checkout"
     And I wait for "6" seconds
-    And I fill the shipping address
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
 
@@ -36,7 +34,6 @@ Feature: A customer should be able to do a checkout with MercadoPago
     When Setting Config "payment/mercadopago_standard/client_secret" is "0"
     And I am on page "checkout"
     And I wait for "6" seconds
-    And I fill the shipping address
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
 
@@ -47,7 +44,6 @@ Feature: A customer should be able to do a checkout with MercadoPago
   Scenario: Generate order with standard checkout
     When I am on page "checkout"
     And I wait for "6" seconds
-    And I fill the shipping address
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
     And I wait for "8" seconds
