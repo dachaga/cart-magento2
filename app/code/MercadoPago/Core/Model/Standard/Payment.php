@@ -234,12 +234,8 @@ class Payment
             'mercadopago_standard_make_preference_before',
             ['params' => $paramsShipment, 'order' => $order]
         );
-        if (!isset($paramsShipment['cost'])) {
-            $paramsShipment['cost'] = (float)$order->getBaseShippingAmount();
-            $paramsShipment['mode'] = 'custom';
-        }
-        $arr = [];
 
+        $arr = [];
         $arr['external_reference'] = $orderIncrementId;
         $arr['items'] = $this->getItems($order);
 
@@ -247,7 +243,6 @@ class Payment
         $this->_calculateBaseTaxAmount($arr['items'], $order);
         $total_item = $this->getTotalItems($arr['items']);
         $total_item += (float)$order->getBaseShippingAmount();
-
         $order_amount = (float)$order->getBaseGrandTotal();
         if (!$order_amount) {
             $order_amount = (float)$order->getBasePrice() + $order->getBaseShippingAmount();
@@ -267,19 +262,17 @@ class Payment
             $this->_helperData->log("Difference add itens: " . $diff_price, 'mercadopago-standard.log');
         }
         if ($order->canShip()) {
-            $shipping = $order->getShippingAddress()->getData();
-
+            $shippingAddress = $order->getShippingAddress();
+            $shipping = $shippingAddress->getData();
             $arr['payer']['phone'] = [
                 "area_code" => "-",
                 "number"    => $shipping['telephone']
             ];
 
-            $paramsShipment['receiver_address'] = $this->getReceiverAddress($order->getShippingAddress());
-            $arr['shipments'] = $paramsShipment;
+            $arr['shipments'] = $this->_getParamShipment($paramsShipment, $order, $shippingAddress);
         }
 
         $billing_address = $order->getBillingAddress()->getData();
-
         $arr['payer']['date_created'] = date('Y-m-d', $customer->getCreatedAtTimestamp()) . "T" . date('H:i:s', $customer->getCreatedAtTimestamp());
         $arr['payer']['email'] = htmlentities($customer->getEmail());
         $arr['payer']['first_name'] = htmlentities($customer->getFirstname());
@@ -321,7 +314,6 @@ class Payment
             $this->_helperData->log("Sponsor_id identificado", 'mercadopago-standard.log', $sponsor_id);
             $arr['sponsor_id'] = (int)$sponsor_id;
         }
-
 
         return $arr;
     }
@@ -425,6 +417,24 @@ class Payment
     }
 
     /**
+     * @param $paramsShipment
+     * @param $order
+     * @param $shippingAddress
+     *
+     * @return mixed
+     */
+    protected function _getParamShipment($paramsShipment, $order, $shippingAddress)
+    {
+        if (empty($paramsShipment)) {
+            $paramsShipment['cost'] = (float)$order->getBaseShippingAmount();
+            $paramsShipment['mode'] = 'custom';
+        }
+        $paramsShipment['receiver_address'] = $this->getReceiverAddress($shippingAddress);
+
+        return $paramsShipment;
+    }
+
+    /**
      * Return info of shipping address
      *
      * @param $shippingAddress
@@ -462,6 +472,7 @@ class Payment
      * Check whether payment method can be used
      *
      * @param \Magento\Quote\Api\Data\CartInterface|null $quote
+     *
      * @return bool
      */
     public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
