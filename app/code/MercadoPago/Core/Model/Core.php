@@ -89,6 +89,11 @@ class Core
     protected $_coreHelper;
 
     /**
+     * @var \MercadoPago\Core\Helper\Order
+     */
+    protected $_orderHelper;
+
+    /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
     protected $_scopeConfig;
@@ -175,6 +180,7 @@ class Core
     public function __construct(
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \MercadoPago\Core\Helper\Data $coreHelper,
+        \MercadoPago\Core\Helper\Order $orderHelper,
         \Magento\Sales\Model\OrderFactory $orderFactory,
         \MercadoPago\Core\Helper\Message\MessageInterface $statusMessage,
         \MercadoPago\Core\Helper\Message\MessageInterface $statusDetailMessage,
@@ -207,6 +213,7 @@ class Core
         $this->_urlBuilder = $urlBuilder;
         $this->_helperImage = $helperImage;
         $this->_checkoutSession = $checkoutSession;
+        $this->_orderHelper = $orderHelper;
     }
 
     /**
@@ -719,6 +726,26 @@ class Core
     }
 
     /**
+     * Creates invoice to order and send an email
+     *
+     * @param $order
+     * @param $message
+     */
+    protected function _createInvoice($order,$message) {
+        if (!$order->hasInvoices()) {
+            $invoice = $order->prepareInvoice();
+            $invoice->register()->pay();
+            $this->_transactionFactory->create()
+                ->addObject($invoice)
+                ->addObject($invoice->getOrder())
+                ->save();
+
+            $this->_invoiceSender->send($invoice, true, $message);
+
+        }
+    }
+
+    /**
      * Updates order status ond creates invoice
      *
      * @param      $payment
@@ -730,32 +757,21 @@ class Core
     {
         $helper = $this->_coreHelper;
         $order = $this->_getOrder($payment["external_reference"]);
-
         $status = $payment['status'];
 
         if (isset($payment['status_final'])) {
             $status = $payment['status_final'];
         }
         $message = $helper->getMessage($status, $payment);
-        if ($this->_coreHelper->isStatusUpdated()) {
+        if ($this->_orderHelper->isStatusUpdated()) {
             return ['text' => $message, 'code' => MercadoPago_Core_Helper_Response::HTTP_OK];
         }
 
         try {
             if ($status == 'approved') {
-                $this->_coreHelper->setOrderSubtotals($payment, $order);
+                $this->_orderHelper->setOrderSubtotals($payment, $order);
+                $this->_createInvoice($order,$message);
 
-                if (!$order->hasInvoices()) {
-                    $invoice = $order->prepareInvoice();
-                    $invoice->register()->pay();
-                    $this->_transactionFactory->create()
-                        ->addObject($invoice)
-                        ->addObject($invoice->getOrder())
-                        ->save();
-
-                    $this->_invoiceSender->send($invoice, true, $message);
-
-                }
                 //Associate card to customer
                 $additionalInfo = $order->getPayment()->getAdditionalInformation();
                 if (isset($additionalInfo['token'])) {
@@ -767,14 +783,14 @@ class Core
                 $order->cancel();
             }
 
-            $statusOrder = $helper->getStatusOrder($status);
+            $statusOrder = $this->_orderHelper->getStatusOrder($status);
             if ($stateObject) {
                 $stateObject->setStatus($statusOrder);
-                $stateObject->setState($helper->_getAssignedState($statusOrder));
+                $stateObject->setState($this->_orderHelper->_getAssignedState($statusOrder));
                 $stateObject->setIsNotified(true);
             }
 
-            $order->setState($helper->_getAssignedState($statusOrder));
+            $order->setState($this->_orderHelper->_getAssignedState($statusOrder));
             $order->addStatusToHistory($statusOrder, $message, true);
             $this->_orderSender->send($order, true, $message);
 
@@ -791,6 +807,27 @@ class Core
     }
 
     /**
+     * @param $order
+     * @param $data
+     *
+     * @return mixed
+     */
+    protected function _setOrderCustomerData($order,$data) {
+        if ($data['payer_first_name']) {
+            $order->setCustomerFirstname($data['payer_first_name']);
+        }
+
+        if ($data['payer_last_name']) {
+            $order->setCustomerLastname($data['payer_last_name']);
+        }
+
+        if ($data['payer_email']) {
+            $order->setCustomerEmail($data['payer_email']);
+        }
+        return $order->save();
+    }
+
+    /**
      * Set order and payment info
      *
      * @param $data
@@ -798,7 +835,7 @@ class Core
     public function updateOrder($data, $order = null)
     {
         $this->_coreHelper->log("Update Order", 'mercadopago-notification.log');
-        if (!$this->_coreHelper->isStatusUpdated()) {
+        if (!$this->_orderHelper->isStatusUpdated()) {
             try {
                 if (!$order) {
                     $order = $this->_getOrder($data["external_reference"]);
@@ -832,20 +869,7 @@ class Core
                 $payment_status = $payment_order->save();
                 $this->_coreHelper->log("Update Payment", 'mercadopago.log', $payment_status->getData());
 
-                if ($data['payer_first_name']) {
-                    $order->setCustomerFirstname($data['payer_first_name']);
-                }
-
-                if ($data['payer_last_name']) {
-                    $order->setCustomerLastname($data['payer_last_name']);
-                }
-
-                if ($data['payer_email']) {
-                    $order->setCustomerEmail($data['payer_email']);
-                }
-
-
-                $status_save = $order->save();
+                $status_save = $this->_setOrderCustomerData($order,$data);
                 $this->_coreHelper->log("Update order", 'mercadopago.log', $status_save->getData());
             } catch (\Exception $e) {
                 $this->_coreHelper->log("erro in update order status: " . $e, 'mercadopago.log');
