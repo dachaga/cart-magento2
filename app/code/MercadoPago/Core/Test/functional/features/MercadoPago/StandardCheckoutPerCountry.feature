@@ -25,7 +25,7 @@ Feature: Payment results in MercadoPago Standard Checkout
     And I press "#next" input element
     And I switch to the site
     And I wait for "12" seconds
-    Then I should be on "/mercadopago/success"
+    Then I should be on "/mercadopago/success/page"
 
     Examples:
       | country | user                            | pass    |

@@ -292,8 +292,8 @@ class Payment
         ];
 
         $arr['back_urls'] = [
-            'success' => $this->_urlBuilder->getUrl('mercadopago/standard/success'),
-            'pending' => $this->_urlBuilder->getUrl('mercadopago/standard/success'),
+            'success' => $this->_urlBuilder->getUrl('mercadopago/success/page'),
+            'pending' => $this->_urlBuilder->getUrl('mercadopago/success/page'),
             'failure' => $this->_urlBuilder->getUrl('checkout/onepage/failure'),
         ];
 
