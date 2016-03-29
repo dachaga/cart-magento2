@@ -7,6 +7,8 @@ namespace MercadoPago\Core\Model;
  * Class Core
  *
  * @package MercadoPago\Core\Model
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Core
     extends \Magento\Payment\Model\Method\AbstractMethod
@@ -87,6 +89,11 @@ class Core
      * @var \MercadoPago\Core\Helper\
      */
     protected $_coreHelper;
+
+    /**
+     * @var \MercadoPago\Core\Helper\Order
+     */
+    protected $_orderHelper;
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -171,10 +178,12 @@ class Core
      * @param \Magento\Framework\UrlInterface                       $urlBuilder
      * @param \Magento\Catalog\Helper\Image                         $helperImage
      * @param \Magento\Checkout\Model\Session                       $checkoutSession
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \MercadoPago\Core\Helper\Data $coreHelper,
+        \MercadoPago\Core\Helper\Order $orderHelper,
         \Magento\Sales\Model\OrderFactory $orderFactory,
         \MercadoPago\Core\Helper\Message\MessageInterface $statusMessage,
         \MercadoPago\Core\Helper\Message\MessageInterface $statusDetailMessage,
@@ -207,6 +216,7 @@ class Core
         $this->_urlBuilder = $urlBuilder;
         $this->_helperImage = $helperImage;
         $this->_checkoutSession = $checkoutSession;
+        $this->_orderHelper = $orderHelper;
     }
 
     /**
@@ -756,13 +766,13 @@ class Core
             $status = $payment['status_final'];
         }
         $message = $helper->getMessage($status, $payment);
-        if ($this->_coreHelper->isStatusUpdated()) {
+        if ($this->_orderHelper->isStatusUpdated()) {
             return ['text' => $message, 'code' => MercadoPago_Core_Helper_Response::HTTP_OK];
         }
 
         try {
             if ($status == 'approved') {
-                $this->_coreHelper->setOrderSubtotals($payment, $order);
+                $this->_orderHelper->setOrderSubtotals($payment, $order);
                 $this->_createInvoice($order,$message);
 
                 //Associate card to customer
@@ -776,14 +786,14 @@ class Core
                 $order->cancel();
             }
 
-            $statusOrder = $helper->getStatusOrder($status);
+            $statusOrder = $this->_orderHelper->getStatusOrder($status);
             if ($stateObject) {
                 $stateObject->setStatus($statusOrder);
-                $stateObject->setState($helper->_getAssignedState($statusOrder));
+                $stateObject->setState($this->_orderHelper->_getAssignedState($statusOrder));
                 $stateObject->setIsNotified(true);
             }
 
-            $order->setState($helper->_getAssignedState($statusOrder));
+            $order->setState($this->_orderHelper->_getAssignedState($statusOrder));
             $order->addStatusToHistory($statusOrder, $message, true);
             $this->_orderSender->send($order, true, $message);
 
@@ -828,7 +838,7 @@ class Core
     public function updateOrder($data, $order = null)
     {
         $this->_coreHelper->log("Update Order", 'mercadopago-notification.log');
-        if (!$this->_coreHelper->isStatusUpdated()) {
+        if (!$this->_orderHelper->isStatusUpdated()) {
             try {
                 if (!$order) {
                     $order = $this->_getOrder($data["external_reference"]);

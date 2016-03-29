@@ -21,6 +21,11 @@ class Standard
     protected $coreHelper;
 
     /**
+     * @var \MercadoPago\Core\Helper\Order
+     */
+    protected $orderHelper;
+
+    /**
      * @var \MercadoPago\Core\Model\Core
      */
     protected $coreModel;
@@ -37,17 +42,20 @@ class Standard
      * @param \Magento\Framework\App\Action\Context           $context
      * @param \MercadoPago\Core\Model\Standard\PaymentFactory $paymentFactory
      * @param \MercadoPago\Core\Helper\Data                   $coreHelper
+     * @param \MercadoPago\Core\Helper\Order                  $orderHelper
      * @param \MercadoPago\Core\Model\Core                    $coreModel
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \MercadoPago\Core\Model\Standard\PaymentFactory $paymentFactory,
         \MercadoPago\Core\Helper\Data $coreHelper,
+        \MercadoPago\Core\Helper\Order $orderHelper,
         \MercadoPago\Core\Model\Core $coreModel
     )
     {
         $this->_paymentFactory = $paymentFactory;
         $this->coreHelper = $coreHelper;
+        $this->orderHelper = $orderHelper;
         $this->coreModel = $coreModel;
         parent::__construct($context);
     }
@@ -75,7 +83,7 @@ class Standard
                     $status_final = $this->_getStatusFinal($data['status']);
                     $shipmentData = (isset($merchant_order['shipments'][0])) ? $merchant_order['shipments'][0] : [];
                     $this->coreHelper->log("Update Order", self::LOG_NAME);
-                    $this->coreHelper->setStatusUpdated($data);
+                    $this->orderHelper->setStatusUpdated($data);
                     $this->coreModel->updateOrder($data);
 
                     if (!empty($shipmentData)) {

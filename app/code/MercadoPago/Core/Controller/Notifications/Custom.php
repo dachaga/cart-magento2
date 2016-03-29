@@ -22,6 +22,11 @@ class Custom
     protected $coreHelper;
 
     /**
+     * @var \MercadoPago\Core\Helper\Order
+     */
+    protected $orderHelper;
+
+    /**
      * @var \MercadoPago\Core\Model\Core
      */
     protected $coreModel;
@@ -44,11 +49,13 @@ class Custom
         \Magento\Framework\App\Action\Context $context,
         \MercadoPago\Core\Model\Standard\PaymentFactory $paymentFactory,
         \MercadoPago\Core\Helper\Data $coreHelper,
+        \MercadoPago\Core\Helper\Order $orderHelper,
         \MercadoPago\Core\Model\Core $coreModel
     )
     {
         $this->_paymentFactory = $paymentFactory;
         $this->coreHelper = $coreHelper;
+        $this->orderHelper = $orderHelper;
         $this->coreModel = $coreModel;
         parent::__construct($context);
     }
@@ -70,7 +77,7 @@ class Custom
             if ($response['status'] == 200 || $response['status'] == 201) {
                 $payment = $response['response'];
 
-                $payment = $this->coreHelper->setPayerInfo($payment);
+                $payment = $this->orderHelper->setPayerInfo($payment);
 
                 $this->coreHelper->log("Update Order", self::LOG_NAME);
                 $this->coreModel->updateOrder($payment);
