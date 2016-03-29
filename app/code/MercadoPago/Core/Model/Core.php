@@ -7,6 +7,8 @@ namespace MercadoPago\Core\Model;
  * Class Core
  *
  * @package MercadoPago\Core\Model
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Core
     extends \Magento\Payment\Model\Method\AbstractMethod
@@ -176,6 +178,7 @@ class Core
      * @param \Magento\Framework\UrlInterface                       $urlBuilder
      * @param \Magento\Catalog\Helper\Image                         $helperImage
      * @param \Magento\Checkout\Model\Session                       $checkoutSession
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         \Magento\Store\Model\StoreManagerInterface $storeManager,

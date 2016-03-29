@@ -6,6 +6,8 @@ namespace MercadoPago\Core\Model\Standard;
  * Class Payment
  *
  * @package MercadoPago\Core\Model\Standard
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Payment
     extends \Magento\Payment\Model\Method\AbstractMethod
@@ -122,6 +124,7 @@ class Payment
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null           $resourceCollection
      * @param array                                                        $data
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         \MercadoPago\Core\Helper\Data $helperData,

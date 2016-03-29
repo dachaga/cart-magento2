@@ -9,6 +9,8 @@ use Magento\Payment\Model\Method\ConfigInterface;
  * Class Payment
  *
  * @package MercadoPago\Core\Model\Custom
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Payment
     extends \Magento\Payment\Model\Method\Cc
@@ -191,6 +193,7 @@ class Payment
      * @param \Magento\Checkout\Model\Session                      $checkoutSession
      * @param \Magento\Sales\Model\OrderFactory                    $orderFactory
      * @param \MercadoPago\Core\Model\Core                         $coreModel
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         \MercadoPago\Core\Helper\Data $helperData,
