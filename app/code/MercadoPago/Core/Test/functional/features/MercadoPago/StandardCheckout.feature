@@ -2,7 +2,8 @@
 Feature: A customer should be able to do a checkout with MercadoPago
 
   Background:
-    Given User "test_user_58666377@testuser.com" "magento" exists
+    Given Setting merchant "mla"
+    And User "test_user_58666377@testuser.com" "magento" exists
     And I am logged in as "test_user_58666377@testuser.com" "magento"
     And I empty cart
     And I am on page "push-it-messenger-bag.html"
@@ -15,7 +16,7 @@ Feature: A customer should be able to do a checkout with MercadoPago
     And I wait for "6" seconds
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
-
+    And I wait for "50" seconds
     Then I should see MercadoPago Standard available
 
   @Availability @ClientId
@@ -25,7 +26,7 @@ Feature: A customer should be able to do a checkout with MercadoPago
     And I wait for "6" seconds
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
-
+    And I wait for "50" seconds
     Then I should not see MercadoPago Standard available
     And i revert configs
 
@@ -33,24 +34,27 @@ Feature: A customer should be able to do a checkout with MercadoPago
   Scenario: Not See MercadoPago option as a payment method when is not available client secret
     When Setting Config "payment/mercadopago_standard/client_secret" is "0"
     And I am on page "checkout"
-    And I wait for "6" seconds
+    And I wait for "10" seconds
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
-
+    And I wait for "50" seconds
     Then I should not see MercadoPago Standard available
     And i revert configs
 
   @checkoutSuccess
   Scenario: Generate order with standard checkout
     When I am on page "checkout"
-    And I wait for "6" seconds
+    And I wait for "10" seconds
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
-    And I wait for "8" seconds
+    And I wait for "60" seconds
     And I select payment method "mercadopago_standard"
-    And I press "button[data-role='review-save']" element
+    And I press "#iframe-submit" element
     And I wait for "5" seconds
     When I switch to the iframe "mercadopago_standard-iframe"
+    And I wait for "15" seconds
+    And I am logged in MP as "test_user_58666377@testuser.com" "qatest3200"
+    And I press "#next" input element
     And I fill the iframe fields
 
     When I press "#next" input element
@@ -64,11 +68,13 @@ Feature: A customer should be able to do a checkout with MercadoPago
     And I wait for "6" seconds
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
-    And I wait for "15" seconds
+    And I wait for "50" seconds
     And I select payment method "mercadopago_standard"
-    And I press ".primary>.button" element
-
+    And I press "#iframe-submit" element
+    And I wait for "5" seconds
     When I switch to the iframe "mercadopago_standard-iframe"
+    And I am logged in MP as "test_user_58666377@testuser.com" "qatest3200"
+    And I press "#next" input element
     Then I should see html "$ 50"
 
 

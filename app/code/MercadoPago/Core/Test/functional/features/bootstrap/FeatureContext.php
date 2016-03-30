@@ -114,6 +114,7 @@ class FeatureContext
         $addresses->save();
 
         $customer->setAddresses([$addresses]);
+        $customer->setDefaultShipping($addresses->getId());
         $customer->save();
     }
 
@@ -346,6 +347,164 @@ class FeatureContext
     }
 
     /**
+     * @When I fill the iframe fields country :arg1
+     */
+    public function iFillTheIframeFieldsCountry($country)
+    {
+        switch ($country) {
+            case 'mlv': {
+                $data['pmtOption'] = 'visa';
+                $data['cardNumber'] = '4966 3823 3110 9310';
+                $data['cardExpirationMonth'] = '01';
+                $data['cardExpirationYear'] = '2017';
+                $data['securityCode'] = '123';
+                $data['cardholderName'] = 'Name';
+                $data['docNumber'] = '14978546';
+                break;
+            }
+            case 'mla': {
+                $data['pmtOption'] = 'visa';
+                $data['cardNumber'] = '4509 9535 6623 3704';
+                $data['cardExpirationMonth'] = '01';
+                $data['cardExpirationYear'] = '2017';
+                $data['securityCode'] = '123';
+                $data['cardholderName'] = 'Name';
+                $data['docNumber'] = '12345678';
+                $data['installments'] = '1';
+                break;
+            }
+            case 'mlb': {
+                $data['pmtOption'] = '168351558';
+                $data['securityCode'] = '123';
+                $data['installments'] = '1';
+                break;
+            }
+            case 'mlm': {
+                $data['pmtOption'] = 'visa';
+                $data['cardNumber'] = '4075 5957 1648 3764';
+                $data['cardExpirationMonth'] = '01';
+                $data['cardExpirationYear'] = '2017';
+                $data['securityCode'] = '123';
+                $data['cardholderName'] = 'Name';
+                $data['docNumber'] = '12345678909';
+                break;
+            }
+            case 'mco': {
+                $data['pmtOption'] = 'visa';
+                $data['cardNumber'] = '4013 5406 8274 6260';
+                $data['cardExpirationMonth'] = '01';
+                $data['cardExpirationYear'] = '2017';
+                $data['securityCode'] = '123';
+                $data['cardholderName'] = 'Name';
+                $data['docNumber'] = '12345678909';
+                break;
+            }
+
+        }
+
+        $this->fillIframeFieldsWithData($data);
+    }
+
+    public function fillIframeFieldsWithData($data)
+    {
+        $page = $this->getSession()->getPage();
+
+        $page->selectFieldOption('pmtOption', $data['pmtOption']);
+
+        if (isset($data['cardNumber'])) {
+            $page->fillField('cardNumber', $data['cardNumber']);
+            $this->getSession()->wait(3000);
+            $page->fillField('cardholderName', $data['cardholderName']);
+            $page->selectFieldOption('cardExpirationMonth', $data['cardExpirationMonth']);
+            $page->selectFieldOption('cardExpirationYear', $data['cardExpirationYear']);
+        }
+        if (isset($data['creditCardIssuerOption'])) {
+            $page->selectFieldOption('creditCardIssuerOption', $data['creditCardIssuerOption']);
+        }
+
+        $page->fillField('securityCode', $data['securityCode']);
+        if (isset($data['docNumber'])) {
+            $page->fillField('docNumber', $data['docNumber']);
+        }
+        if (isset($data['installments'])) {
+            $page->selectFieldOption('installments', $data['installments']);
+        }
+    }
+
+    public function selectFirstOption($select) {
+        $handler = $this->getSession()->getSelectorsHandler();
+        $page = $this->getSession()->getPage();
+        $optionElements = $page->findAll('css','option');
+        $option = $optionElements[1];
+        $page->selectFieldOption($select,$option->getValue());
+    }
+
+    /**
+     * @When I fill the iframe shipping address fields :arg1
+     */
+    public function iFillTheIframeShippingAddressFields($country)
+    {
+        try {
+            $element = $this->findElement('#streetName');
+        } catch (Exception $e) {
+            return;
+        }
+
+        if ($element) {
+            switch ($country) {
+                case 'mla': {
+                    $page = $this->getSession()->getPage();
+                    $page->fillField('streetName', 'Mitre');
+                    $page->fillField('streetNumber', '123');
+                    $page->fillField('zipCode', '7000');
+                    $page->fillField('cityName', 'Tandil');
+                    $this->selectFirstOption('stateId');
+                    $page->fillField('contact', 'test');
+                    $page->fillField('phone', '43434343');
+                    break;
+                }
+                case 'mlv': {
+                    $page = $this->getSession()->getPage();
+                    $page->fillField('streetName', 'Mitre');
+                    $page->fillField('streetNumber', '123');
+                    $page->fillField('zipCode', '1000');
+                    $page->fillField('cityName', 'City');
+                    $this->selectFirstOption('stateId');
+                    $page->fillField('contact', 'test');
+                    $page->fillField('phone', '43434343');
+                    break;
+                }
+                case 'mlb': {
+                    $page = $this->getSession()->getPage();
+                    $page->fillField('zipCode', '01046925');
+                    $this->iWaitForSeconds(3);
+                    $page->find('css','#search')->click();
+                    $this->iWaitForSeconds(3);
+                    $page->fillField('streetNumber', '123');
+                    $page->fillField('cityName', 'City');
+                    $page->fillField('contact', 'test');
+                    $page->fillField('phone', '43434343');
+                    break;
+                }
+            }
+        }
+
+    }
+
+    /**
+     * @When I confirm shipping
+     */
+    public function iConfirmShipping() {
+        $page = $this->getSession()->getPage();
+//        try {
+//            $this->findElement('input[name="deliveryOption"]');
+            $page->fillField('deliveryOption','agree');
+//        } catch (ElementNotFoundException $e) {
+//            return;
+//        }
+    }
+
+    /**
      * @Given I press :cssClass input element
      */
     public function iPressInputElement($cssClass)
@@ -476,6 +635,5 @@ class FeatureContext
             }
         }
     }
-
 
 }

@@ -7,26 +7,37 @@ Feature: Payment results in MercadoPago Standard Checkout
     And User "<user>" "<pass>" exists
     And I am logged in as "<user>" "<pass>"
     And I empty cart
-    And I am on page "blue-horizons-bracelets.html"
-    And I press "#product-addtocart-button" element with path
-    And I am on page "checkout/cart/"
-    And I press "[data-role='proceed-to-checkout']" element
-    And I wait for "6" seconds
-    And I fill the shipping address
+    And I am on page "push-it-messenger-bag.html"
+    And I press "#product-addtocart-button" element
+    And I wait for "10" seconds
+    And I am on page "checkout"
+    And I wait for "10" seconds
     And I select shipping method "flatrate_flatrate"
     And I press "#shipping-method-buttons-container .button" element
-    And I wait for "8" seconds
+    And I wait for "45" seconds
     And I select payment method "mercadopago_standard"
     And Setting Config "payment/mercadopago_standard/sandbox_mode" is "0"
-    And I press "button[data-role='review-save']" element
-    And I wait for "5" seconds
-    And I am logged in MP as "test_user_58787749@testuser.com" "qatest850"
+    And I press "#iframe-submit" element
+    And I wait for "10" seconds
+    When I switch to the iframe "mercadopago_standard-iframe"
+    And I wait for "15" seconds
+    And I am logged in MP as "<user>" "<passmp>"
+    And I fill the iframe shipping address fields "<country>"
+    And I press "#next" input element
+    And I confirm shipping
+    And I press "#next" input element
+    And I wait for "10" seconds
     And I fill the iframe fields country <country>
     And I press "#next" input element
     And I switch to the site
     And I wait for "12" seconds
     Then I should be on "/mercadopago/success/page"
+    And i revert configs
 
     Examples:
-      | country | user                            | pass    |
-      | mlv     | test_user_58787749@testuser.com | magento |
+      | country | user                            | pass    | passmp     |
+#      | mlv     | test_user_58787749@testuser.com | magento | qatest850  |
+#      | mla     | test_user_58666377@testuser.com | magento | qatest3200 |
+      | mlb     | test_user_98856744@testuser.com | magento | qatest1198 |
+#      | mlm     | test_user_67307313@testuser.com | magento | qatest3023 |
+#      | mco     | test_user_57818518@testuser.com | magento | qatest3922 |
