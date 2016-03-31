@@ -50,7 +50,7 @@ Feature: A customer should be able to do a checkout with MercadoPago
     And I wait for "60" seconds
     And I select payment method "mercadopago_standard"
     And I press "#iframe-submit" element
-    And I wait for "5" seconds
+    And I wait for "10" seconds
     When I switch to the iframe "mercadopago_standard-iframe"
     And I wait for "15" seconds
     And I am logged in MP as "test_user_58666377@testuser.com" "qatest3200"
@@ -71,7 +71,7 @@ Feature: A customer should be able to do a checkout with MercadoPago
     And I wait for "50" seconds
     And I select payment method "mercadopago_standard"
     And I press "#iframe-submit" element
-    And I wait for "5" seconds
+    And I wait for "10" seconds
     When I switch to the iframe "mercadopago_standard-iframe"
     And I am logged in MP as "test_user_58666377@testuser.com" "qatest3200"
     And I press "#next" input element

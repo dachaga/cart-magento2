@@ -23,7 +23,6 @@ Feature: Payment results in MercadoPago Standard Checkout
     And I wait for "15" seconds
     And I am logged in MP as "<user>" "<passmp>"
     And I fill the iframe shipping address fields "<country>"
-    And I press "#next" input element
     And I confirm shipping
     And I press "#next" input element
     And I wait for "10" seconds
@@ -36,8 +35,6 @@ Feature: Payment results in MercadoPago Standard Checkout
 
     Examples:
       | country | user                            | pass    | passmp     |
-#      | mlv     | test_user_58787749@testuser.com | magento | qatest850  |
-#      | mla     | test_user_58666377@testuser.com | magento | qatest3200 |
+      | mlv     | test_user_58787749@testuser.com | magento | qatest850  |
+      | mla     | test_user_58666377@testuser.com | magento | qatest3200 |
       | mlb     | test_user_98856744@testuser.com | magento | qatest1198 |
-#      | mlm     | test_user_67307313@testuser.com | magento | qatest3023 |
-#      | mco     | test_user_57818518@testuser.com | magento | qatest3922 |

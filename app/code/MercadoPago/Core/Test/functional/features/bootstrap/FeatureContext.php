@@ -461,6 +461,7 @@ class FeatureContext
                     $this->selectFirstOption('stateId');
                     $page->fillField('contact', 'test');
                     $page->fillField('phone', '43434343');
+                    $this->iPressInputElement('#next');
                     break;
                 }
                 case 'mlv': {
@@ -472,6 +473,7 @@ class FeatureContext
                     $this->selectFirstOption('stateId');
                     $page->fillField('contact', 'test');
                     $page->fillField('phone', '43434343');
+                    $this->iPressInputElement('#next');
                     break;
                 }
                 case 'mlb': {
@@ -484,6 +486,19 @@ class FeatureContext
                     $page->fillField('cityName', 'City');
                     $page->fillField('contact', 'test');
                     $page->fillField('phone', '43434343');
+                    $this->iPressInputElement('#next');
+                    break;
+                }
+                case 'mco': {
+                    $page = $this->getSession()->getPage();
+                    $page->fillField('streetName', 'Mitre');
+                    $page->fillField('streetNumber', '123');
+                    $page->fillField('zipCode', '1000');
+                    $page->fillField('cityName', 'City');
+                    $this->selectFirstOption('stateId');
+                    $page->fillField('contact', 'test');
+                    $page->fillField('phone', '43434343');
+                    $this->iPressInputElement('#next');
                     break;
                 }
             }
@@ -496,12 +511,10 @@ class FeatureContext
      */
     public function iConfirmShipping() {
         $page = $this->getSession()->getPage();
-//        try {
-//            $this->findElement('input[name="deliveryOption"]');
+        $opt = $page->find('css','input#agree');
+        if (!empty($opt)) {
             $page->fillField('deliveryOption','agree');
-//        } catch (ElementNotFoundException $e) {
-//            return;
-//        }
+        }
     }
 
     /**
@@ -582,8 +595,8 @@ class FeatureContext
                 'access_token'  => 'TEST-201313175671817-111108-b30483a389dbc6a04e401c23e62da2c1__LB_LC__-193994249'
             ],
             'mco' => [
-                'client_id'     => '3688958250893559',
-                'client_secret' => 'bASLUlb5s12QYPAUJwCQUMa21wFzFrzz',
+                'client_id'     => '7635994297462517',
+                'client_secret' => '53E051xeO250kubwaYmmlhcTWTdeB9TZ',
                 'public_key'    => 'TEST-d6e2006f-933f-4dd2-aea4-c3986b30e691',
                 'access_token'  => 'TEST-3688958250893559-030308-19e24cdca75845d460c2935585b1e375__LA_LB__-207596493'
             ]
