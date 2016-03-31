@@ -649,4 +649,32 @@ class FeatureContext
         }
     }
 
+    /**
+     * @Then I should see :arg1
+     */
+    public function iShouldSee($arg1)
+    {
+        $actual = $this->getSession()->getPage()->getText();
+        if (!$this->_stringMatch($actual, $arg1)) {
+            throw new ExpectationException('Element' . $arg1 . ' not found', $this->getSession()->getDriver());
+        }
+    }
+
+    /**
+     * @Given I fill text field :arg1 in form :arg2 with :arg3
+     */
+    public function iFillTextFieldInForm($field, $form, $value)
+    {
+        $this->findElement($form . ' ' . $field)->setValue($value);
+    }
+
+    /**
+     * @When I select ticket :arg1
+     */
+    public function iSelectTicket($ticket){
+        $page = $this->getSession()->getPage();
+        $page->fillField('payment[mercadopago_customticket][payment_method_ticket]',$ticket);
+    }
+
+
 }
