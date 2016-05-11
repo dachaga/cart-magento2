@@ -23,11 +23,6 @@ class Subtotals
      */
     protected $quoteRepository;
 
-    /**
-     * @var \Magento\Framework\Registry
-     */
-    protected $_registry;
-
 
     /**
      * Coupon constructor.
@@ -35,7 +30,6 @@ class Subtotals
      * @param \Magento\Framework\App\Action\Context      $context
      * @param \Magento\Checkout\Model\Session            $checkoutSession
      * @param \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
-     * @param \Magento\Framework\Registry                $registry
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -47,7 +41,6 @@ class Subtotals
         parent::__construct($context);
         $this->_checkoutSession = $checkoutSession;
         $this->quoteRepository = $quoteRepository;
-        $this->_registry     = $registry;
     }
 
     /**
@@ -57,11 +50,7 @@ class Subtotals
      */
     public function execute()
     {
-        $total = $this->getRequest()->getParam('cost');
         $quote = $this->_checkoutSession->getQuote();
-
-        //save value to DiscountCoupon collect
-        $this->_registry->register('mercadopago_total_amount', $total);
         $this->quoteRepository->save($quote->collectTotals());
         return;
     }

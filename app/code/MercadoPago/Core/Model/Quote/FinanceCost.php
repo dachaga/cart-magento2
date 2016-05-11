@@ -97,7 +97,7 @@ class FinanceCost
      */
     protected function _getFinanceCostAmount()
     {
-        $totalAmount = $this->_registry->registry('mercadopago_total_amount');
+        $totalAmount = $this->_request->getParam('cost');
         if (empty($totalAmount)) {
             return 0;
         }
